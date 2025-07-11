@@ -8,14 +8,8 @@ import {
   Post,
 } from '@nestjs/common';
 import { UserService } from './user.services';
-import { $Enums } from 'generated/prisma';
-
-interface CreateUserDto {
-  name: string;
-  email: string;
-  password: string;
-  role: $Enums.Role;
-}
+import { CreateUserDto } from './domain/dto/createUser.dto';
+import { UpdateUserDto } from './domain/dto/updateUser.dto';
 
 @Controller('users')
 export class UserController {
@@ -37,7 +31,7 @@ export class UserController {
   }
 
   @Patch(':id')
-  updateUser(@Param('id') id: string, @Body() body: CreateUserDto) {
+  updateUser(@Param('id') id: string, @Body() body: UpdateUserDto) {
     return this.userService.updateUser(Number(id), body);
   }
 
