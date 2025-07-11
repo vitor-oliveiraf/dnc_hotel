@@ -4,6 +4,7 @@ import { User } from 'generated/prisma';
 import { CreateUserDto } from './domain/dto/createUser.dto';
 import { UpdateUserDto } from './domain/dto/updateUser.dto';
 import * as bcrypt from 'bcrypt';
+import { useSelectFields } from '../prisma/utils/useSelectFields';
 
 @Injectable()
 export class UserService {
@@ -11,13 +12,14 @@ export class UserService {
 
   //   List all users
   async listUsers(): Promise<User[]> {
-    return await this.prisma.user.findMany();
+    return await this.prisma.user.findMany({
+      select: useSelectFields,
+    });
   }
 
   //   Show a user
-  async showUser(id: number): Promise<User | null> {
-    const user = await this.isIdExists(id);
-    return user;
+  async showUser(id: number): Promise<User> {
+    return await this.isIdExists(id);
   }
 
   //   Create a user
@@ -26,6 +28,7 @@ export class UserService {
     const hashedPassword = await this.hashPassword(body.password);
     return this.prisma.user.create({
       data: { ...body, password: hashedPassword },
+      select: useSelectFields,
     });
   }
 
@@ -41,14 +44,17 @@ export class UserService {
       body.password = await this.hashPassword(body.password);
     }
 
-    return this.prisma.user.update({ where: { id }, data: body });
+    return this.prisma.user.update({
+      where: { id },
+      data: body,
+      select: useSelectFields,
+    });
   }
 
   //   Delete a user
   async deleteUser(id: number): Promise<User> {
     await this.isIdExists(id);
-
-    return this.prisma.user.delete({ where: { id } });
+    return this.prisma.user.delete({ where: { id }, select: useSelectFields });
   }
 
   //   Check if the user exists
