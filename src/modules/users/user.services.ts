@@ -57,6 +57,13 @@ export class UserService {
     return this.prisma.user.delete({ where: { id }, select: useSelectFields });
   }
 
+  //   Get a user by email
+  async getUserByEmail(email: string) {
+    return await this.prisma.user.findUnique({
+      where: { email },
+    });
+  }
+
   //   Check if the user exists
   private async isIdExists(id: number): Promise<User> {
     const user = await this.prisma.user.findUnique({ where: { id } });
