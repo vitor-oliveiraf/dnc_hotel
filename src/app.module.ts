@@ -2,9 +2,7 @@ import { Module } from '@nestjs/common';
 import { PrismaModule } from './modules/prisma/prisma.module';
 import { UserModule } from './modules/users/user.module';
 import { AuthModule } from './modules/auth/auth.module';
-import { ThrottlerModule } from '@nestjs/throttler';
-import { APP_GUARD } from '@nestjs/core';
-import { ThrottlerGuard } from '@nestjs/throttler';
+import { MailerModule } from '@nestjs-modules/mailer';
 
 @Module({
   imports: [
@@ -23,6 +21,12 @@ import { ThrottlerGuard } from '@nestjs/throttler';
     //     provide: APP_GUARD,
     //     useClass: ThrottlerGuard,
     //   },
+    MailerModule.forRoot({
+      transport: process.env.SMTP,
+      defaults: {
+        from: `"dnc_hotels" <${process.env.EMAIL_USER}>`,
+      },
+    }),
   ],
 })
 export class AppModule {}

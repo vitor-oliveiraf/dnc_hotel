@@ -11,12 +11,15 @@ import { Role } from 'generated/prisma';
 import { AuthForgotPasswordDTO } from './domain/dto/authForgotPassword.dto';
 import { ValidateTokenDTO } from './domain/dto/authValidateToken.dto';
 import { AuthResetPasswordDTO } from './domain/dto/authResetPassword.dto';
+import { MailerService } from '@nestjs-modules/mailer';
+import templateHTML from './utils/templateHTML';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly jwtService: JwtService,
     private readonly userService: UserService,
+    private readonly mailerService: MailerService,
   ) {}
 
   async generateJwtToken(user: User, expiresIn: string = '1d') {
@@ -65,7 +68,13 @@ export class AuthService {
 
     const resetToken = await this.generateJwtToken(user, '30m');
 
-    return resetToken;
+    await this.mailerService.sendMail({
+      to: email,
+      subject: 'Redefinição de Senha',
+      html: templateHTML(user.name, resetToken.access_token),
+    });
+
+    return `A verificação do token foi enviada para ${user.email}`;
   }
 
   async resetPassword({ token, password }: AuthResetPasswordDTO) {
