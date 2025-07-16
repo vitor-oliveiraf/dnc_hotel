@@ -54,6 +54,7 @@ export class AuthService {
       email: body.email,
       password: body.password,
       role: body.role ?? Role.USER,
+      avatar: body.avatar ?? '',
     };
 
     const user = await this.userService.createUser(newUser);

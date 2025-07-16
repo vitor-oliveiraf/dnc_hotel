@@ -7,6 +7,10 @@ import {
   UseInterceptors,
   Post,
   UseGuards,
+  UploadedFile,
+  ParseFilePipe,
+  MaxFileSizeValidator,
+  FileTypeValidator,
 } from '@nestjs/common';
 import { ParamId } from '../../shared/decorators/paramId.decorator';
 import { UserService } from './user.services';
@@ -19,6 +23,8 @@ import { Role, User as UserType } from 'generated/prisma';
 import { RoleGuard } from '../../shared/guards/role.guard';
 import { Roles } from '../../shared/decorators/roles.decorator';
 import { UserMatchGuard } from '../../shared/guards/userMatch.guard';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { FileValidationInterceptor } from '../../shared/interceptors/fileValidation.interceptor';
 
 @UseGuards(AuthGuard, RoleGuard)
 @UseInterceptors(LoggingInterceptor)
@@ -53,5 +59,24 @@ export class UserController {
   @Delete(':id')
   deleteUser(@ParamId() id: number) {
     return this.userService.deleteUser(id);
+  }
+
+  @UseInterceptors(FileInterceptor('avatar'), FileValidationInterceptor)
+  @Post('upload-avatar')
+  uploadAvatar(
+    @UserDecorator('id') userId: number,
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new MaxFileSizeValidator({ maxSize: 1024 * 1024 * 5 }),
+          new FileTypeValidator({
+            fileType: 'image/*',
+          }),
+        ],
+      }),
+    )
+    avatar: Express.Multer.File,
+  ) {
+    return this.userService.updateAvatar(userId, avatar);
   }
 }

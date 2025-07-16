@@ -5,6 +5,8 @@ import { CreateUserDto } from './domain/dto/createUser.dto';
 import { UpdateUserDto } from './domain/dto/updateUser.dto';
 import * as bcrypt from 'bcrypt';
 import { useSelectFields } from '../prisma/utils/useSelectFields';
+import { join, resolve } from 'path';
+import { stat, unlink } from 'fs/promises';
 
 @Injectable()
 export class UserService {
@@ -51,6 +53,28 @@ export class UserService {
     });
   }
 
+  //   Update the user avatar
+  async updateAvatar(id: number, avatar: Express.Multer.File) {
+    const user = await this.isIdExists(id);
+    const directory = resolve(__dirname, '..', '..', '..', 'uploads');
+
+    if (user.avatar && user.avatar !== '') {
+      const userAvatarFilePath = join(directory, user.avatar);
+      try {
+        const userAvatarFileExists = await stat(userAvatarFilePath);
+        if (userAvatarFileExists) {
+          await unlink(userAvatarFilePath);
+        }
+      } catch {
+        // File doesn't exist, ignore error
+      }
+    }
+
+    const userUpdated = await this.updateUser(id, { avatar: avatar.filename });
+
+    return userUpdated;
+  }
+
   //   Delete a user
   async deleteUser(id: number): Promise<User> {
     await this.isIdExists(id);
@@ -66,7 +90,10 @@ export class UserService {
 
   //   Check if the user exists
   private async isIdExists(id: number): Promise<User> {
-    const user = await this.prisma.user.findUnique({ where: { id } });
+    const user = await this.prisma.user.findUnique({
+      where: { id },
+      select: useSelectFields,
+    });
 
     if (!user) {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
