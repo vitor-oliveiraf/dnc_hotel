@@ -5,7 +5,7 @@ import { UserService } from './user.services';
 import { AuthModule } from '../auth/auth.module';
 import { MulterModule } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
-import { v4 as uuidv4 } from 'uuid';
+import { randomUUID } from 'crypto';
 
 @Module({
   imports: [
@@ -15,7 +15,7 @@ import { v4 as uuidv4 } from 'uuid';
       storage: diskStorage({
         destination: './uploads',
         filename: (req, file, cb) => {
-          const filename = `${uuidv4()}-${file.originalname}`;
+          const filename = `${Date.now()}-${randomUUID()}-${file.originalname}`;
           cb(null, filename);
         },
       }),

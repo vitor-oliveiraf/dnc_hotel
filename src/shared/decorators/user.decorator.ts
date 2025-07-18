@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { Request } from 'express';
-import { User } from 'generated/prisma';
+import { User } from '@prisma/client';
 
 interface RequestWithUser extends Request {
   user?: User;

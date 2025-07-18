@@ -19,7 +19,7 @@ import { UpdateUserDto } from './domain/dto/updateUser.dto';
 import { LoggingInterceptor } from '../../shared/interceptors/logging.interceptor';
 import { AuthGuard } from '../../shared/guards/auth.guard';
 import { UserDecorator } from '../../shared/decorators/user.decorator';
-import { Role, User as UserType } from 'generated/prisma';
+import { Role, User as UserType } from '@prisma/client';
 import { RoleGuard } from '../../shared/guards/role.guard';
 import { Roles } from '../../shared/decorators/roles.decorator';
 import { UserMatchGuard } from '../../shared/guards/userMatch.guard';

@@ -6,7 +6,6 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
 }
 
 datasource db {
@@ -28,5 +27,20 @@ model User {
   avatar    String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  hotels    Hotel[] // 1:N - 1 user can have many hotels
   @@map("users")
+}
+
+model Hotel {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String
+  address     String
+  image       String?
+  price       Float
+  ownerId     Int
+  owner       User     @relation(fields: [ownerId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  @@map("hotels")
 }

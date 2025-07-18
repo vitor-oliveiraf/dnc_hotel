@@ -1,13 +1,13 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { User } from 'generated/prisma';
+import { User } from '@prisma/client';
 import { AuthLoginDto } from './domain/dto/authLogin.dto';
 import * as bcrypt from 'bcrypt';
 import { HttpStatus } from '@nestjs/common';
 import { UserService } from '../users/user.services';
 import { AuthRegisterDTO } from './domain/dto/authRegister.dto';
 import { CreateUserDto } from '../users/domain/dto/createUser.dto';
-import { Role } from 'generated/prisma';
+import { Role } from '@prisma/client';
 import { AuthForgotPasswordDTO } from './domain/dto/authForgotPassword.dto';
 import { ValidateTokenDTO } from './domain/dto/authValidateToken.dto';
 import { AuthResetPasswordDTO } from './domain/dto/authResetPassword.dto';

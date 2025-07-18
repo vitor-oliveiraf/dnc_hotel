@@ -5,7 +5,7 @@ import {
   HttpStatus,
   Injectable,
 } from '@nestjs/common';
-import { User } from 'generated/prisma';
+import { User } from '@prisma/client';
 
 interface RequestWithUser extends Request {
   user?: User;
