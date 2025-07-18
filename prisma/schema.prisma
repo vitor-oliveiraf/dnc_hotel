@@ -18,6 +18,12 @@ enum Role {
   USER
 }
 
+enum ReservationStatus {
+  PENDING
+  APPROVED
+  CANCELLED
+}
+
 model User {
   id        Int      @id @default(autoincrement())
   name      String
@@ -28,6 +34,7 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   hotels    Hotel[] // 1:N - 1 user can have many hotels
+  reservations Reservation[] // 1:N - 1 user can have many reservations
   @@map("users")
 }
 
@@ -42,5 +49,21 @@ model Hotel {
   owner       User     @relation(fields: [ownerId], references: [id])
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  reservations Reservation[] // 1:N - 1 hotel can have many reservations
   @@map("hotels")
+}
+
+model Reservation {
+  id        Int      @id @default(autoincrement())
+  checkIn   DateTime
+  checkOut  DateTime
+  total     Float
+  status    ReservationStatus   @default(PENDING)
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  hotelId   Int
+  hotel     Hotel    @relation(fields: [hotelId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@map("reservations")
 }
