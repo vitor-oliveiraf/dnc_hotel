@@ -1,4 +1,12 @@
-import { Controller, Post, Body, Get, Param, Patch } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Get,
+  Param,
+  Patch,
+  UseInterceptors,
+} from '@nestjs/common';
 import { CreateReservationService } from '../services/createReservation.service';
 import { CreateReservationDto } from '../domain/dto/create-reservation.dto';
 import { UseGuards } from '@nestjs/common';
@@ -11,8 +19,10 @@ import { UpdateStatusReservationService } from '../services/UpdateStatusReservat
 import { UserDecorator } from '../../../shared/decorators/user.decorator';
 import { Role } from '@prisma/client';
 import { Roles } from '../../../shared/decorators/roles.decorator';
+import { LoggingInterceptor } from 'src/shared/interceptors/logging.interceptor';
 
 @UseGuards(AuthGuard)
+@UseInterceptors(LoggingInterceptor)
 @Controller('reservations')
 export class ReservationsController {
   constructor(
@@ -26,6 +36,7 @@ export class ReservationsController {
   @Roles(Role.USER)
   @Post()
   create(@UserDecorator('id') id: number, @Body() data: CreateReservationDto) {
+    console.log('data::::::::', data);
     return this.reservationsService.execute(id, data);
   }
 

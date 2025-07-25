@@ -7,15 +7,13 @@ import { Reservation, ReservationStatus } from '@prisma/client';
 export class ReservationsRepositories implements IReservationRepositories {
   constructor(private readonly prisma: PrismaService) {}
 
-  createReservation(data: Reservation): Promise<Reservation> {
-    return this.prisma.reservation.create({
-      data,
-    });
+  create(data: any): Promise<Reservation> {
+    return this.prisma.reservation.create({ data });
   }
 
   findReservationById(id: number): Promise<Reservation> {
     return this.prisma.reservation.findUnique({
-      where: { id },
+      where: { id: Number(id) },
     });
   }
 
@@ -34,7 +32,7 @@ export class ReservationsRepositories implements IReservationRepositories {
     status: ReservationStatus,
   ): Promise<Reservation> {
     return this.prisma.reservation.update({
-      where: { id },
+      where: { id: Number(id) },
       data: { status },
     });
   }

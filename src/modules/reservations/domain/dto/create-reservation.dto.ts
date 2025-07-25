@@ -1,3 +1,5 @@
+import { ReservationStatus } from '@prisma/client';
+import { Transform } from 'class-transformer';
 import {
   IsEnum,
   IsNotEmpty,
@@ -5,8 +7,6 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
-import { ReservationStatus } from '@prisma/client';
-import { Transform } from 'class-transformer';
 
 export class CreateReservationDto {
   @IsNumber()
@@ -23,8 +23,6 @@ export class CreateReservationDto {
 
   @IsEnum(ReservationStatus)
   @IsOptional()
-  @Transform(
-    ({ value }): ReservationStatus => value ?? ReservationStatus.PENDING,
-  )
+  @Transform((value) => value ?? ReservationStatus.PENDING)
   status: ReservationStatus;
 }
