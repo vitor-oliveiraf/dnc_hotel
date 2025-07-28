@@ -4,12 +4,16 @@ import { HOTEL_REPOSITORY_TOKEN } from '../utils/repositoriesTokens';
 import { join } from 'path';
 import { stat, unlink } from 'fs/promises';
 import { resolve } from 'path';
+import { InjectRedis } from '@nestjs-modules/ioredis';
+import Redis from 'ioredis';
+import { HOTELS_KEY } from '../utils/redisKey';
 
 @Injectable()
 export class UpdateImageHotelService {
   constructor(
     @Inject(HOTEL_REPOSITORY_TOKEN)
     private readonly hotelRepositories: IHotelRepository,
+    @InjectRedis() private readonly redis: Redis,
   ) {}
 
   async execute(id: number, image: Express.Multer.File) {
@@ -36,6 +40,7 @@ export class UpdateImageHotelService {
         // File doesn't exist, ignore error
       }
     }
+    await this.redis.del(HOTELS_KEY);
     return await this.hotelRepositories.updateHotel(id, {
       image: image.filename,
     });
